@@ -21,25 +21,158 @@
             color: #f3e5ab;
         }
 
-        .scene-tree {
-            position: relative;
+        /* ÉCRAN D'ACCÈS AVEC LA PRAIRIE ET LA PORTE */
+        .gate-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100vw;
             height: 100vh;
-            background: #0d1608 url('arbre.jpg') no-repeat center center;
+            background: #1e3f1c url('prairie.jpg') no-repeat center center;
             background-size: cover;
             display: flex;
             justify-content: center;
             align-items: center;
+            z-index: 100;
+            transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
         }
 
-        .scene-overlay {
+        .door-hitbox {
+            position: absolute;
+            top: 25%;
+            left: 41%;
+            width: 18%;
+            height: 55%;
+            cursor: pointer;
+            z-index: 10;
+            background: transparent;
+            border: 2px dashed rgba(245, 215, 127, 0.3);
+            border-radius: 4px;
+            transition: border-color 0.3s, background 0.3s;
+        }
+
+        .door-hitbox:hover {
+            border-color: #f5d77f;
+            background: rgba(245, 215, 127, 0.1);
+        }
+
+        .keypad-modal {
+            display: none;
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            z-index: 1;
+            background: rgba(5, 10, 3, 0.85);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            padding: 20px;
+        }
+
+        .gate-card {
+            background: linear-gradient(145deg, rgba(28, 14, 6, 0.95), rgba(10, 5, 2, 0.98));
+            border: 2px solid #b8860b;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            max-width: 340px;
+            width: 100%;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9);
+            position: relative;
+        }
+
+        .close-keypad-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #c0a87a;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .close-keypad-btn:hover {
+            color: #f5d77f;
+        }
+
+        .gate-card h2 {
+            color: #f5d77f;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .gate-card p {
+            color: #c0a87a;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .code-display {
+            background: #0a0502;
+            border: 2px solid #b8860b;
+            border-radius: 8px;
+            color: #f5d77f;
+            font-size: 1.8rem;
+            letter-spacing: 8px;
+            padding: 10px;
+            margin-bottom: 1.2rem;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.8);
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .key-btn {
+            background: linear-gradient(180deg, #b8860b, #6b4212);
+            color: #fff;
+            border: 1px solid #f5d77f;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 12px 0;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .key-btn:active {
+            transform: scale(0.95);
+            background: linear-gradient(180deg, #d4af37, #8b5a2b);
+        }
+
+        .error-msg {
+            color: #e74c3c;
+            font-size: 0.8rem;
+            height: 20px;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        /* SCÈNE DE L'ARBRE */
+        .scene-tree {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0d1608;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            overflow: hidden;
         }
 
         header {
@@ -47,7 +180,8 @@
             top: 15px;
             width: 100%;
             text-align: center;
-            z-index: 10;
+            z-index: 30;
+            pointer-events: none;
         }
 
         header h1 {
@@ -66,22 +200,39 @@
             font-style: italic;
         }
 
-        /* Plaque centrale (Souvenirs Partagés) */
+        /* CONTENEUR QUI A EXACTEMENT LE RATIO DE L'IMAGE DE L'ARBRE */
+        .tree-wrapper {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            max-width: 177.7778vh; /* Ratio 16:9 (16/9 = 1.7778) */
+            max-height: 56.25vw;   /* Ratio 16:9 (9/16 = 0.5625) */
+            margin: auto;
+        }
+
+        .tree-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* LA PLAQUE DU TRONC POSITIONNÉE DANS LE WRAPPER DE L'IMAGE */
         .trunk-plaque {
             position: absolute;
-            top: 65%;
+            top: 79%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 75%;
+            width: 28%;
             max-width: 260px;
             background: linear-gradient(145deg, rgba(28, 14, 6, 0.88), rgba(10, 5, 2, 0.92));
             border: 1px solid rgba(184, 134, 11, 0.7);
             box-shadow: 0 8px 25px rgba(0,0,0,0.9);
             border-radius: 8px;
-            padding: 0.6rem 1rem;
+            padding: 0.5rem 1rem;
             text-align: center;
             cursor: pointer;
-            z-index: 5;
+            z-index: 25;
             transition: transform 0.3s, border-color 0.3s;
         }
 
@@ -91,23 +242,23 @@
         }
 
         .trunk-plaque h2 {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #f5d77f;
-            margin-bottom: 0.15rem;
+            margin-bottom: 0.1rem;
             letter-spacing: 1px;
             text-transform: uppercase;
         }
 
         .trunk-plaque p {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             color: #c0a87a;
         }
 
-        /* PASTILLES STANDARD */
+        /* PASTILLES DES MEMBRES */
         .member-node {
             position: absolute;
-            width: 90px;
-            height: 90px;
+            width: 7.2%;
+            height: 12.8%;
             border-radius: 50%;
             cursor: pointer;
             z-index: 20;
@@ -116,13 +267,14 @@
             background: rgba(0,0,0,0.5);
             border: 2px solid #b8860b;
             box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+            transform: translate(-50%, -50%);
             -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0.8) 65%, rgba(0,0,0,0) 90%);
             mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0.8) 65%, rgba(0,0,0,0) 90%);
         }
 
         .member-node.lana-node {
-            width: 99px;
-            height: 99px;
+            width: 8.5%;
+            height: 15%;
         }
 
         .member-node img {
@@ -133,7 +285,7 @@
         }
 
         .member-node:hover {
-            transform: scale(1.15);
+            transform: translate(-50%, -50%) scale(1.15);
             border-color: #f5d77f;
         }
 
@@ -144,7 +296,7 @@
             color: #f5d77f;
             padding: 2px 6px;
             border-radius: 4px;
-            font-size: 0.65rem;
+            font-size: 0.62rem;
             font-weight: bold;
             white-space: nowrap;
             border: 1px solid rgba(184, 134, 11, 0.5);
@@ -162,7 +314,7 @@
             font-weight: bold;
             font-size: 0.9rem;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            z-index: 25;
+            z-index: 35;
             pointer-events: none;
             animation: popUp 0.3s ease;
         }
@@ -227,7 +379,6 @@
             letter-spacing: 1px;
         }
 
-        /* CONTENEUR DU LECTEUR MÉDIA PRINCIPAL */
         .media-player-container {
             display: flex;
             align-items: center;
@@ -270,7 +421,6 @@
             z-index: 3;
         }
 
-        /* BOUTONS DE NAVIGATION DU LECTEUR */
         .media-nav-btn {
             background: linear-gradient(180deg, #b8860b, #6b4212);
             color: #fff;
@@ -294,7 +444,6 @@
             background: linear-gradient(180deg, #d4af37, #8b5a2b);
         }
 
-        /* PETITES MINIATURES EN BAS DE LA MODALE */
         .prairie-thumbnails {
             display: flex;
             gap: 8px;
@@ -363,34 +512,60 @@
         .close-prairie-btn:hover {
             background: linear-gradient(180deg, #d4af37, #8b5a2b);
         }
-
-        @media (max-width: 768px) {
-            header h1 { font-size: 1.3rem; }
-            .member-node { width: 75px; height: 75px; }
-            .member-node.lana-node { width: 82px; height: 82px; }
-            .media-nav-btn { width: 36px; height: 36px; font-size: 1rem; }
-            .mini-thumb-wrap { width: 45px; height: 45px; }
-        }
     </style>
 </head>
 <body>
 
-    <div class="scene-tree" id="sceneTree">
-        <div class="scene-overlay"></div>
+    <!-- ÉCRAN D'ACCÈS AVEC LA PRAIRIE -->
+    <div class="gate-screen" id="gateScreen">
+        <div class="door-hitbox" onclick="openKeypad()" title="Cliquez sur la porte pour entrer le code"></div>
 
+        <div class="keypad-modal" id="keypadModal">
+            <div class="gate-card">
+                <button class="close-keypad-btn" onclick="closeKeypad()">✕</button>
+                <h2>Domaine de Bohême</h2>
+                <p>Entrez le code secret pour ouvrir la porte</p>
+                
+                <div class="code-display" id="codeDisplay">____</div>
+                
+                <div class="keypad">
+                    <button class="key-btn" onclick="pressKey('1')">1</button>
+                    <button class="key-btn" onclick="pressKey('2')">2</button>
+                    <button class="key-btn" onclick="pressKey('3')">3</button>
+                    <button class="key-btn" onclick="pressKey('4')">4</button>
+                    <button class="key-btn" onclick="pressKey('5')">5</button>
+                    <button class="key-btn" onclick="pressKey('6')">6</button>
+                    <button class="key-btn" onclick="pressKey('7')">7</button>
+                    <button class="key-btn" onclick="pressKey('8')">8</button>
+                    <button class="key-btn" onclick="pressKey('9')">9</button>
+                    <button class="key-btn" onclick="clearCode()">C</button>
+                    <button class="key-btn" onclick="pressKey('0')">0</button>
+                    <button class="key-btn" onclick="submitCode()">↵</button>
+                </div>
+                
+                <div class="error-msg" id="errorMsg"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCÈNE DE L'ARBRE -->
+    <div class="scene-tree" id="sceneTree">
         <header>
             <h1>Le Grand Chêne</h1>
             <p>Domaine de Bohême</p>
         </header>
 
-        <!-- Plaque centrale (Souvenirs Partagés) -->
-        <div class="trunk-plaque" onclick="openMediaPlayer('souvenirs_partages', 0)">
-            <h2>📜 Souvenirs Partagés</h2>
-            <p>Photos de groupe et événements</p>
+        <!-- CONTENEUR STRICTEMENT LIÉ AUX DIMENSIONS DE L'IMAGE DE L'ARBRE -->
+        <div class="tree-wrapper" id="treeWrapper">
+            <img src="arbre.jpg" alt="Le Grand Chêne" class="tree-image" id="treeImage">
+
+            <div class="trunk-plaque" onclick="openMediaPlayer('souvenirs_partages', 0)">
+                <h2>📜 Souvenirs Partagés</h2>
+                <p>Photos de groupe et événements</p>
+            </div>
+            
+            <div class="speech-bubble" id="speechBubble">Philippe trop gentil 🐷</div>
         </div>
-        
-        <!-- Bulle de dialogue interactive -->
-        <div class="speech-bubble" id="speechBubble">Philippe trop gentil 🐷</div>
     </div>
 
     <!-- MODALE LECTEUR MÉDIA -->
@@ -400,7 +575,6 @@
                 <h3 id="prairieTitle">Album</h3>
             </div>
             
-            <!-- Lecteur Média Principal -->
             <div class="media-player-container">
                 <button class="media-nav-btn" onclick="prevMediaItem()">‹</button>
                 
@@ -411,7 +585,6 @@
                 <button class="media-nav-btn" onclick="nextMediaItem()">›</button>
             </div>
 
-            <!-- Barre de miniatures pour navigation rapide -->
             <div class="prairie-thumbnails" id="prairieThumbnails"></div>
 
             <button class="close-prairie-btn" onclick="closePrairieModal()">Fermer l'album</button>
@@ -419,46 +592,76 @@
     </div>
 
     <script>
-        // =========================================================================
-        // CONFIGURATION DES MEMBRES & ALBUMS
-        // Le 1er élément est TOUJOURS "1.jpg" pour l'illustration de la pastille sur l'arbre,
-        // suivi des autres photos et vidéos ("2.jpg", "2.mp4", "3.jpg", etc.)
-        // =========================================================================
-        const familyMembers = [
-            { id: "mami_nicole", name: "Mami Nicole", top: "10%", left: "42%", folder: "MAMIE NICOLE", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
-            { id: "papi_gerard", name: "Papi Gérard", top: "10%", left: "58%", folder: "PAPI GERARD", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+        const SECRET_CODE = "1418"; 
+        let enteredCode = "";
 
-            { id: "fifi", name: "Fifi", top: "22%", left: "18%", folder: "FIFI", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"], isSpecial: "philippe" },
-            { id: "tata_coco", name: "Tata Coco", top: "22%", left: "28%", folder: "TATA COCO", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
-            { id: "tonton_gigi", name: "Tonton Gigi", top: "22%", left: "50%", folder: "TONTON GIGI", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
-            { id: "bibi", name: "Bibi", top: "22%", left: "78%", folder: "BIBI", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+        function openKeypad() {
+            document.getElementById("keypadModal").style.display = "flex";
+            clearCode();
+        }
 
-            { id: "chippo", name: "Chippo", top: "34%", left: "31%", folder: "CHIPPO", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
-            { id: "mamie_brigitte", name: "Mamie Brigitte", top: "33%", left: "63%", folder: "MAMIE BRIGITTE", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+        function closeKeypad() {
+            document.getElementById("keypadModal").style.display = "none";
+        }
 
-            { id: "mamie_suze", name: "Mamie Suze", top: "42%", left: "57%", folder: "MAMIE SUZE", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
-            { id: "papi_christophe", name: "Papi Christophe", top: "42%", left: "69%", folder: "PAPI CHRISTOPHE", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
-
-            { id: "rody", name: "Rody", top: "50%", left: "37%", folder: "RODY", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
-            { id: "anais", name: "Anais", top: "50%", left: "63%", folder: "ANAIS", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
-
-            { 
-                id: "lana", 
-                name: "Lana", 
-                top: "53%", 
-                left: "50%", 
-                folder: "LANA",
-                files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"], 
-                isLana: true 
-            },
-
-            {
-                id: "souvenirs_partages",
-                name: "Souvenirs Partagés",
-                folder: "souvenirs partagés",
-                files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"],
-                isHiddenOnTree: true
+        function pressKey(digit) {
+            if (enteredCode.length < 4) {
+                enteredCode += digit;
+                updateDisplay();
             }
+            if (enteredCode.length === 4) {
+                submitCode();
+            }
+        }
+
+        function clearCode() {
+            enteredCode = "";
+            updateDisplay();
+            document.getElementById("errorMsg").innerText = "";
+        }
+
+        function updateDisplay() {
+            let displayStr = "";
+            for (let i = 0; i < 4; i++) {
+                displayStr += i < enteredCode.length ? "•" : "_";
+            }
+            document.getElementById("codeDisplay").innerText = displayStr;
+        }
+
+        function submitCode() {
+            if (enteredCode === SECRET_CODE) {
+                document.getElementById("errorMsg").style.color = "#2ecc71";
+                document.getElementById("errorMsg").innerText = "Accès autorisé...";
+                setTimeout(() => {
+                    const gate = document.getElementById("gateScreen");
+                    gate.style.opacity = "0";
+                    gate.style.visibility = "hidden";
+                    document.getElementById("sceneTree").style.opacity = "1";
+                }, 500);
+            } else {
+                document.getElementById("errorMsg").style.color = "#e74c3c";
+                document.getElementById("errorMsg").innerText = "Code incorrect !";
+                setTimeout(() => {
+                    clearCode();
+                }, 1000);
+            }
+        }
+
+        const familyMembers = [
+            { id: "mami_nicole", name: "Mami Nicole", top: "18%", left: "42%", folder: "MAMIE NICOLE", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "papi_gerard", name: "Papi Gérard", top: "18%", left: "58%", folder: "PAPI GERARD", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "fifi", name: "Fifi", top: "27%", left: "21%", folder: "FIFI", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"], isSpecial: "philippe" },
+            { id: "tata_coco", name: "Tata Coco", top: "27%", left: "29%", folder: "TATA COCO", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "tonton_gigi", name: "Tonton Gigi", top: "27%", left: "48%", folder: "TONTON GIGI", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "bibi", name: "Bibi", top: "27%", left: "75%", folder: "BIBI", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "chippo", name: "Chippo", top: "37%", left: "33%", folder: "CHIPPO", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "mamie_brigitte", name: "Mamie Brigitte", top: "37%", left: "67%", folder: "MAMIE BRIGITTE", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "mamie_suze", name: "Mamie Suze", top: "48%", left: "60%", folder: "MAMIE SUZE", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "papi_christophe", name: "Papi Christophe", top: "48%", left: "72%", folder: "PAPI CHRISTOPHE", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "rody", name: "Rody", top: "59%", left: "35%", folder: "RODY", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "anais", name: "Anais", top: "59%", left: "67%", folder: "ANAIS", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "lana", name: "Lana", top: "62%", left: "51%", folder: "LANA", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"], isLana: true },
+            { id: "souvenirs_partages", name: "Souvenirs Partagés", folder: "souvenirs partagés", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"], isHiddenOnTree: true }
         ];
 
         let currentActiveMember = null;
@@ -470,9 +673,8 @@
             return ext === 'mp4' || ext === 'webm' || ext === 'ogg';
         }
 
-        // Génération des pastilles sur l'arbre en utilisant toujours "1.jpg"
         window.onload = function() {
-            const scene = document.getElementById("sceneTree");
+            const treeWrapper = document.getElementById("treeWrapper");
 
             familyMembers.forEach(member => {
                 if (member.isHiddenOnTree) return;
@@ -481,18 +683,12 @@
                 node.className = "member-node" + (member.isLana ? " lana-node" : "");
                 node.style.top = member.top;
                 node.style.left = member.left;
-                node.style.transform = "translate(-50%, -50%)";
                 node.title = member.name;
 
                 const img = document.createElement("img");
                 img.alt = member.name;
-                // Charge explicitement 1.jpg pour la pastille de l'arbre
                 img.src = member.folder + "/1.jpg";
-
-                img.onerror = function() {
-                    this.style.display = "none"; // Sécurité si 1.jpg venait à manquer
-                };
-
+                img.onerror = function() { this.style.display = "none"; };
                 node.appendChild(img);
 
                 node.onclick = () => {
@@ -502,22 +698,18 @@
                     openMediaPlayer(member.id, 0);
                 };
 
-                scene.appendChild(node);
+                treeWrapper.appendChild(node);
 
-                // Étiquette du nom
                 const label = document.createElement("div");
                 label.className = "member-label";
                 label.innerText = member.name;
-                
-                let offset = member.isLana ? 6.2 : 5.2;
-                let topCalc = parseFloat(member.top) + offset; 
-                label.style.top = topCalc + "%";
+                let offset = member.isLana ? 9.5 : 8.2;
+                label.style.top = (parseFloat(member.top) + offset) + "%";
                 label.style.left = member.left;
-                scene.appendChild(label);
+                treeWrapper.appendChild(label);
             });
         };
 
-        // Ouverture du lecteur multimédia (commence par 1.jpg ou un autre index si cliqué depuis la miniature)
         function openMediaPlayer(memberId, startIndex) {
             const member = familyMembers.find(m => m.id === memberId);
             if (!member) return;
@@ -545,24 +737,14 @@
             const currentItem = validMediaList[currentIndex];
 
             if (currentItem.isVideo) {
-                screenContainer.innerHTML = `
-                    <video controls autoplay src="${currentItem.path}"></video>
-                    ${counterHTML}
-                `;
+                screenContainer.innerHTML = `<video controls autoplay src="${currentItem.path}"></video>${counterHTML}`;
             } else {
-                screenContainer.innerHTML = `
-                    <img id="mainMediaImg" src="${currentItem.path}" alt="Photo">
-                    ${counterHTML}
-                `;
+                screenContainer.innerHTML = `<img src="${currentItem.path}" alt="Photo">${counterHTML}`;
             }
 
-            const thumbWraps = document.querySelectorAll(".mini-thumb-wrap");
-            thumbWraps.forEach((wrap, idx) => {
-                if (idx === currentIndex) {
-                    wrap.classList.add("active");
-                } else {
-                    wrap.classList.remove("active");
-                }
+            document.querySelectorAll(".mini-thumb-wrap").forEach((wrap, idx) => {
+                if (idx === currentIndex) wrap.classList.add("active");
+                else wrap.classList.remove("active");
             });
         }
 
@@ -590,30 +772,19 @@
                 thumb.className = "mini-thumb";
                 
                 if (media.isVideo) {
-                    // Tente de mettre un aperçu image si elle existe (ex: 2.jpg pour 2.mp4), sinon bascule sur 1.jpg
                     thumb.src = media.path.substring(0, media.path.lastIndexOf('.')) + '.jpg';
-                    thumb.onerror = function() {
-                        this.src = currentActiveMember.folder + '/1.jpg';
-                    };
-                    
+                    thumb.onerror = function() { this.src = currentActiveMember.folder + '/1.jpg'; };
                     const badge = document.createElement("div");
                     badge.className = "video-badge";
                     badge.innerText = "▶ Vidéo";
                     wrap.appendChild(badge);
                 } else {
                     thumb.src = media.path;
-                    thumb.onerror = function() {
-                        this.style.display = "none";
-                    };
+                    thumb.onerror = function() { this.style.display = "none"; };
                 }
 
                 wrap.insertBefore(thumb, wrap.firstChild);
-
-                wrap.onclick = () => {
-                    currentIndex = idx;
-                    updatePlayerView();
-                };
-
+                wrap.onclick = () => { currentIndex = idx; updatePlayerView(); };
                 container.appendChild(wrap);
             });
         }
@@ -621,7 +792,6 @@
         function closePrairieModal() {
             const activeVideo = document.querySelector(".media-screen video");
             if (activeVideo) activeVideo.pause();
-
             document.getElementById("prairieModal").style.display = "none";
         }
 
@@ -636,20 +806,16 @@
                 if ('speechSynthesis' in window) {
                     window.speechSynthesis.cancel();
                     const voices = window.speechSynthesis.getVoices();
-                    const maleVoice = voices.find(v => v.lang.startsWith('fr') && (v.name.toLowerCase().includes('thomas') || v.name.toLowerCase().includes('nicolas') || v.name.toLowerCase().includes('paul') || v.name.toLowerCase().includes('male') || (!v.name.toLowerCase().includes('hortense') && !v.name.toLowerCase().includes('julie') && !v.name.toLowerCase().includes('marie'))));
-
+                    const maleVoice = voices.find(v => v.lang.startsWith('fr') && (v.name.toLowerCase().includes('thomas') || v.name.toLowerCase().includes('nicolas') || v.name.toLowerCase().includes('paul') || v.name.toLowerCase().includes('male')));
                     const utterance = new SpeechSynthesisUtterance("Philippe trop gentil");
                     utterance.lang = 'fr-FR';
                     utterance.pitch = 0.4;
                     utterance.rate = 0.95;
-                    utterance.volume = 1.0;
                     if (maleVoice) utterance.voice = maleVoice;
-
                     window.speechSynthesis.speak(utterance);
                 }
             } catch(e) {}
         }
     </script>
-
 </body>
 </html>
