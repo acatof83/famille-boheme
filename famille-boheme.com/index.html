@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Le Grand Chêne Millénaire — Domaine de Bohême</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Georgia', serif;
+            background-color: #0d1608;
+            color: #f3e5ab;
+        }
+
+        .scene-tree {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: #0d1608 url('arbre.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .scene-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        header {
+            position: absolute;
+            top: 15px;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            color: #f5d77f;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.95);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        header p {
+            color: #c9dbb8;
+            font-size: 0.9rem;
+            text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.95);
+            margin-top: 2px;
+            font-style: italic;
+        }
+
+        /* Plaque centrale (Souvenirs Partagés) */
+        .trunk-plaque {
+            position: absolute;
+            top: 65%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 75%;
+            max-width: 260px;
+            background: linear-gradient(145deg, rgba(28, 14, 6, 0.88), rgba(10, 5, 2, 0.92));
+            border: 1px solid rgba(184, 134, 11, 0.7);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.9);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            z-index: 5;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .trunk-plaque:hover {
+            transform: translate(-50%, -53%) scale(1.03);
+            border-color: #f5d77f;
+        }
+
+        .trunk-plaque h2 {
+            font-size: 0.95rem;
+            color: #f5d77f;
+            margin-bottom: 0.15rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .trunk-plaque p {
+            font-size: 0.65rem;
+            color: #c0a87a;
+        }
+
+        /* PASTILLES STANDARD */
+        .member-node {
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 20;
+            overflow: hidden;
+            transition: all 0.35s ease;
+            background: rgba(0,0,0,0.5);
+            border: 2px solid #b8860b;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+            -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0.8) 65%, rgba(0,0,0,0) 90%);
+            mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0.8) 65%, rgba(0,0,0,0) 90%);
+        }
+
+        .member-node.lana-node {
+            width: 99px;
+            height: 99px;
+        }
+
+        .member-node img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease, opacity 0.5s ease-in-out;
+        }
+
+        .member-node:hover {
+            transform: scale(1.15);
+            border-color: #f5d77f;
+        }
+
+        .member-label {
+            position: absolute;
+            transform: translateX(-50%);
+            background: rgba(10, 5, 2, 0.88);
+            color: #f5d77f;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            white-space: nowrap;
+            border: 1px solid rgba(184, 134, 11, 0.5);
+            pointer-events: none;
+            z-index: 21;
+        }
+
+        .speech-bubble {
+            display: none;
+            position: absolute;
+            background: #fff;
+            color: #221207;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            z-index: 25;
+            pointer-events: none;
+            animation: popUp 0.3s ease;
+        }
+
+        @keyframes popUp {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* MODALE LECTEUR MÉDIA */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 12, 3, 0.92);
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            padding: 15px;
+        }
+
+        .prairie-content {
+            position: relative;
+            background: url('arbre.jpg') no-repeat center center;
+            background-size: cover;
+            border: 3px solid #b8860b;
+            border-radius: 16px;
+            max-width: 750px;
+            width: 100%;
+            max-height: 90vh;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.95);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .prairie-content::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(12, 20, 8, 0.82);
+            z-index: 1;
+        }
+
+        .prairie-header, .media-player-container, .prairie-thumbnails, .close-prairie-btn {
+            position: relative;
+            z-index: 2;
+        }
+
+        .prairie-header h3 {
+            color: #f5d77f;
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.9);
+            letter-spacing: 1px;
+        }
+
+        /* CONTENEUR DU LECTEUR MÉDIA PRINCIPAL */
+        .media-player-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+            min-height: 250px;
+            max-height: 50vh;
+        }
+
+        .media-screen {
+            position: relative;
+            max-height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .media-screen img, .media-screen video {
+            max-width: 100%;
+            max-height: 45vh;
+            object-fit: contain;
+            border: 2px solid #b8860b;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+            background: #000;
+        }
+
+        .media-counter {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(10, 5, 2, 0.85);
+            color: #f5d77f;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            border: 1px solid rgba(184, 134, 11, 0.5);
+            z-index: 3;
+        }
+
+        /* BOUTONS DE NAVIGATION DU LECTEUR */
+        .media-nav-btn {
+            background: linear-gradient(180deg, #b8860b, #6b4212);
+            color: #fff;
+            border: 1px solid #f5d77f;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, background 0.3s;
+            flex-shrink: 0;
+        }
+
+        .media-nav-btn:hover {
+            transform: scale(1.1);
+            background: linear-gradient(180deg, #d4af37, #8b5a2b);
+        }
+
+        /* PETITES MINIATURES EN BAS DE LA MODALE */
+        .prairie-thumbnails {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 5px;
+            justify-content: center;
+            margin-bottom: 1rem;
+            max-height: 75px;
+        }
+
+        .mini-thumb-wrap {
+            position: relative;
+            width: 55px;
+            height: 55px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .mini-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 2px solid #5a3818;
+            opacity: 0.6;
+            transition: all 0.2s;
+        }
+
+        .mini-thumb-wrap:hover .mini-thumb {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        .mini-thumb-wrap.active .mini-thumb {
+            border-color: #f5d77f;
+            opacity: 1;
+            box-shadow: 0 0 10px rgba(245, 215, 127, 0.6);
+        }
+
+        .video-badge {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            background: rgba(0,0,0,0.7);
+            color: #f5d77f;
+            font-size: 0.55rem;
+            padding: 1px 3px;
+            border-radius: 3px;
+        }
+
+        .close-prairie-btn {
+            background: linear-gradient(180deg, #b8860b, #6b4212);
+            color: #fff;
+            border: 1px solid #f5d77f;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+            transition: background 0.3s;
+            align-self: center;
+        }
+
+        .close-prairie-btn:hover {
+            background: linear-gradient(180deg, #d4af37, #8b5a2b);
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.3rem; }
+            .member-node { width: 75px; height: 75px; }
+            .member-node.lana-node { width: 82px; height: 82px; }
+            .media-nav-btn { width: 36px; height: 36px; font-size: 1rem; }
+            .mini-thumb-wrap { width: 45px; height: 45px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scene-tree" id="sceneTree">
+        <div class="scene-overlay"></div>
+
+        <header>
+            <h1>Le Grand Chêne</h1>
+            <p>Domaine de Bohême</p>
+        </header>
+
+        <!-- Plaque centrale (Souvenirs Partagés) -->
+        <div class="trunk-plaque" onclick="openMediaPlayer('souvenirs_partages', 0)">
+            <h2>📜 Souvenirs Partagés</h2>
+            <p>Photos de groupe et événements</p>
+        </div>
+        
+        <!-- Bulle de dialogue interactive -->
+        <div class="speech-bubble" id="speechBubble">Philippe trop gentil 🐷</div>
+    </div>
+
+    <!-- MODALE LECTEUR MÉDIA -->
+    <div class="modal-overlay" id="prairieModal">
+        <div class="prairie-content">
+            <div class="prairie-header">
+                <h3 id="prairieTitle">Album</h3>
+            </div>
+            
+            <!-- Lecteur Média Principal -->
+            <div class="media-player-container">
+                <button class="media-nav-btn" onclick="prevMediaItem()">‹</button>
+                
+                <div class="media-screen" id="mediaScreenContainer">
+                    <div class="media-counter" id="mediaCounter">1 / 1</div>
+                </div>
+
+                <button class="media-nav-btn" onclick="nextMediaItem()">›</button>
+            </div>
+
+            <!-- Barre de miniatures pour navigation rapide -->
+            <div class="prairie-thumbnails" id="prairieThumbnails"></div>
+
+            <button class="close-prairie-btn" onclick="closePrairieModal()">Fermer l'album</button>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // CONFIGURATION DES MEMBRES & ALBUMS
+        // Le 1er élément est TOUJOURS "1.jpg" pour l'illustration de la pastille sur l'arbre,
+        // suivi des autres photos et vidéos ("2.jpg", "2.mp4", "3.jpg", etc.)
+        // =========================================================================
+        const familyMembers = [
+            { id: "mami_nicole", name: "Mami Nicole", top: "10%", left: "42%", folder: "MAMIE NICOLE", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "papi_gerard", name: "Papi Gérard", top: "10%", left: "58%", folder: "PAPI GERARD", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+
+            { id: "fifi", name: "Fifi", top: "22%", left: "18%", folder: "FIFI", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"], isSpecial: "philippe" },
+            { id: "tata_coco", name: "Tata Coco", top: "22%", left: "28%", folder: "TATA COCO", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "tonton_gigi", name: "Tonton Gigi", top: "22%", left: "50%", folder: "TONTON GIGI", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "bibi", name: "Bibi", top: "22%", left: "78%", folder: "BIBI", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+
+            { id: "chippo", name: "Chippo", top: "34%", left: "31%", folder: "CHIPPO", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "mamie_brigitte", name: "Mamie Brigitte", top: "33%", left: "63%", folder: "MAMIE BRIGITTE", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+
+            { id: "mamie_suze", name: "Mamie Suze", top: "42%", left: "57%", folder: "MAMIE SUZE", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "papi_christophe", name: "Papi Christophe", top: "42%", left: "69%", folder: "PAPI CHRISTOPHE", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+
+            { id: "rody", name: "Rody", top: "50%", left: "37%", folder: "RODY", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+            { id: "anais", name: "Anais", top: "50%", left: "63%", folder: "ANAIS", files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"] },
+
+            { 
+                id: "lana", 
+                name: "Lana", 
+                top: "53%", 
+                left: "50%", 
+                folder: "LANA",
+                files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"], 
+                isLana: true 
+            },
+
+            {
+                id: "souvenirs_partages",
+                name: "Souvenirs Partagés",
+                folder: "souvenirs partagés",
+                files: ["1.jpg", "2.jpg", "2.mp4", "3.jpg"],
+                isHiddenOnTree: true
+            }
+        ];
+
+        let currentActiveMember = null;
+        let validMediaList = [];
+        let currentIndex = 0;
+
+        function isVideoFile(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            return ext === 'mp4' || ext === 'webm' || ext === 'ogg';
+        }
+
+        // Génération des pastilles sur l'arbre en utilisant toujours "1.jpg"
+        window.onload = function() {
+            const scene = document.getElementById("sceneTree");
+
+            familyMembers.forEach(member => {
+                if (member.isHiddenOnTree) return;
+
+                const node = document.createElement("div");
+                node.className = "member-node" + (member.isLana ? " lana-node" : "");
+                node.style.top = member.top;
+                node.style.left = member.left;
+                node.style.transform = "translate(-50%, -50%)";
+                node.title = member.name;
+
+                const img = document.createElement("img");
+                img.alt = member.name;
+                // Charge explicitement 1.jpg pour la pastille de l'arbre
+                img.src = member.folder + "/1.jpg";
+
+                img.onerror = function() {
+                    this.style.display = "none"; // Sécurité si 1.jpg venait à manquer
+                };
+
+                node.appendChild(img);
+
+                node.onclick = () => {
+                    if (member.isSpecial === "philippe") {
+                        triggerPhilippe();
+                    }
+                    openMediaPlayer(member.id, 0);
+                };
+
+                scene.appendChild(node);
+
+                // Étiquette du nom
+                const label = document.createElement("div");
+                label.className = "member-label";
+                label.innerText = member.name;
+                
+                let offset = member.isLana ? 6.2 : 5.2;
+                let topCalc = parseFloat(member.top) + offset; 
+                label.style.top = topCalc + "%";
+                label.style.left = member.left;
+                scene.appendChild(label);
+            });
+        };
+
+        // Ouverture du lecteur multimédia (commence par 1.jpg ou un autre index si cliqué depuis la miniature)
+        function openMediaPlayer(memberId, startIndex) {
+            const member = familyMembers.find(m => m.id === memberId);
+            if (!member) return;
+
+            currentActiveMember = member;
+            validMediaList = member.files.map(file => ({
+                path: member.folder + "/" + file,
+                isVideo: isVideoFile(file)
+            }));
+            
+            currentIndex = startIndex >= 0 && startIndex < validMediaList.length ? startIndex : 0;
+
+            document.getElementById("prairieTitle").innerText = "Album de " + member.name;
+            updatePlayerView();
+            buildThumbnailsBar();
+
+            document.getElementById("prairieModal").style.display = "flex";
+        }
+
+        function updatePlayerView() {
+            if (validMediaList.length === 0) return;
+
+            const screenContainer = document.getElementById("mediaScreenContainer");
+            const counterHTML = `<div class="media-counter" id="mediaCounter">${currentIndex + 1} / ${validMediaList.length}</div>`;
+            const currentItem = validMediaList[currentIndex];
+
+            if (currentItem.isVideo) {
+                screenContainer.innerHTML = `
+                    <video controls autoplay src="${currentItem.path}"></video>
+                    ${counterHTML}
+                `;
+            } else {
+                screenContainer.innerHTML = `
+                    <img id="mainMediaImg" src="${currentItem.path}" alt="Photo">
+                    ${counterHTML}
+                `;
+            }
+
+            const thumbWraps = document.querySelectorAll(".mini-thumb-wrap");
+            thumbWraps.forEach((wrap, idx) => {
+                if (idx === currentIndex) {
+                    wrap.classList.add("active");
+                } else {
+                    wrap.classList.remove("active");
+                }
+            });
+        }
+
+        function nextMediaItem() {
+            if (validMediaList.length === 0) return;
+            currentIndex = (currentIndex + 1) % validMediaList.length;
+            updatePlayerView();
+        }
+
+        function prevMediaItem() {
+            if (validMediaList.length === 0) return;
+            currentIndex = (currentIndex - 1 + validMediaList.length) % validMediaList.length;
+            updatePlayerView();
+        }
+
+        function buildThumbnailsBar() {
+            const container = document.getElementById("prairieThumbnails");
+            container.innerHTML = "";
+
+            validMediaList.forEach((media, idx) => {
+                const wrap = document.createElement("div");
+                wrap.className = "mini-thumb-wrap" + (idx === currentIndex ? " active" : "");
+
+                const thumb = document.createElement("img");
+                thumb.className = "mini-thumb";
+                
+                if (media.isVideo) {
+                    // Tente de mettre un aperçu image si elle existe (ex: 2.jpg pour 2.mp4), sinon bascule sur 1.jpg
+                    thumb.src = media.path.substring(0, media.path.lastIndexOf('.')) + '.jpg';
+                    thumb.onerror = function() {
+                        this.src = currentActiveMember.folder + '/1.jpg';
+                    };
+                    
+                    const badge = document.createElement("div");
+                    badge.className = "video-badge";
+                    badge.innerText = "▶ Vidéo";
+                    wrap.appendChild(badge);
+                } else {
+                    thumb.src = media.path;
+                    thumb.onerror = function() {
+                        this.style.display = "none";
+                    };
+                }
+
+                wrap.insertBefore(thumb, wrap.firstChild);
+
+                wrap.onclick = () => {
+                    currentIndex = idx;
+                    updatePlayerView();
+                };
+
+                container.appendChild(wrap);
+            });
+        }
+
+        function closePrairieModal() {
+            const activeVideo = document.querySelector(".media-screen video");
+            if (activeVideo) activeVideo.pause();
+
+            document.getElementById("prairieModal").style.display = "none";
+        }
+
+        function triggerPhilippe() {
+            const bubble = document.getElementById("speechBubble");
+            bubble.style.bottom = "23%";
+            bubble.style.right = "15%";
+            bubble.style.display = "block";
+            setTimeout(() => { bubble.style.display = "none"; }, 3500);
+
+            try {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const voices = window.speechSynthesis.getVoices();
+                    const maleVoice = voices.find(v => v.lang.startsWith('fr') && (v.name.toLowerCase().includes('thomas') || v.name.toLowerCase().includes('nicolas') || v.name.toLowerCase().includes('paul') || v.name.toLowerCase().includes('male') || (!v.name.toLowerCase().includes('hortense') && !v.name.toLowerCase().includes('julie') && !v.name.toLowerCase().includes('marie'))));
+
+                    const utterance = new SpeechSynthesisUtterance("Philippe trop gentil");
+                    utterance.lang = 'fr-FR';
+                    utterance.pitch = 0.4;
+                    utterance.rate = 0.95;
+                    utterance.volume = 1.0;
+                    if (maleVoice) utterance.voice = maleVoice;
+
+                    window.speechSynthesis.speak(utterance);
+                }
+            } catch(e) {}
+        }
+    </script>
+
+</body>
+</html>
