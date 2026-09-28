@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Le Grand Chêne Millénaire — Domaine de Bohême</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Georgia', serif;
+            background-color: #0d1608;
+            color: #f3e5ab;
+        }
+
+        /* Scène avec votre photo locale : arbre.jpg */
+        .scene-tree {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: #0d1608 url('arbre.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Voile atmosphérique léger */
+        .scene-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        /* Titre du Domaine */
+        header {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            color: #f5d77f;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.95);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        header p {
+            color: #c9dbb8;
+            font-size: 0.95rem;
+            text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.95);
+            margin-top: 3px;
+            font-style: italic;
+        }
+
+        /* ----------------------------------------------------
+           PLAQUE CENTRALE DU TRONC (Réduite et élégante)
+        ---------------------------------------------------- */
+        .trunk-plaque {
+            position: absolute;
+            top: 62%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 75%;
+            max-width: 280px;
+            background: linear-gradient(145deg, rgba(28, 14, 6, 0.88), rgba(10, 5, 2, 0.92));
+            border: 1px solid rgba(184, 134, 11, 0.7);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.9);
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            z-index: 5;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .trunk-plaque:hover, .trunk-plaque:active {
+            transform: translate(-50%, -53%) scale(1.03);
+            border-color: #f5d77f;
+        }
+
+        .trunk-plaque h2 {
+            font-size: 1.05rem;
+            color: #f5d77f;
+            margin-bottom: 0.2rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .trunk-plaque p {
+            font-size: 0.75rem;
+            color: #c0a87a;
+        }
+
+        /* ----------------------------------------------------
+           PASTILLE DE LANA (Au-dessus de la plaque)
+        ---------------------------------------------------- */
+        .pastille-node {
+            position: absolute;
+            top: 43%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 78px;
+            height: 78px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 5;
+            overflow: hidden;
+            transition: all 0.35s ease;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            
+            /* Masque de fondu radial progressif */
+            -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 38%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0) 88%);
+            mask-image: radial-gradient(circle, rgba(0,0,0,1) 38%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0) 88%);
+        }
+
+        .pastille-node img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .pastille-node:hover, .pastille-node:active {
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+
+        .pastille-node:hover img {
+            transform: scale(1.08);
+        }
+
+        /* ----------------------------------------------------
+           PASTILLE DU COCHON (Philippe - Bas droite, fondue et discrète)
+        ---------------------------------------------------- */
+        .pig-node {
+            position: absolute;
+            bottom: 12%;
+            right: 18%;
+            width: 78px;
+            height: 78px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 20;
+            overflow: hidden;
+            transition: all 0.35s ease;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            
+            /* Masque de fondu radial progressif pour se fondre dans le décor */
+            -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 38%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0) 88%);
+            mask-image: radial-gradient(circle, rgba(0,0,0,1) 38%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0) 88%);
+        }
+
+        .pig-node img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .pig-node:hover, .pig-node:active {
+            transform: scale(1.15);
+        }
+
+        .pig-node:hover img {
+            transform: scale(1.08);
+        }
+
+        /* Bulle de texte dynamique */
+        .speech-bubble {
+            display: none;
+            position: absolute;
+            bottom: 23%;
+            right: 15%;
+            background: #fff;
+            color: #221207;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            z-index: 25;
+            pointer-events: none;
+            animation: popUp 0.3s ease;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            right: 25px;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid #fff;
+        }
+
+        @keyframes popUp {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* ----------------------------------------------------
+           FENÊTRE MODALE POUR LANA
+        ---------------------------------------------------- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 3, 1, 0.88);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            padding: 15px;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #221207, #0f0702);
+            border: 2px solid #b8860b;
+            border-radius: 12px;
+            max-width: 480px;
+            width: 100%;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.95);
+        }
+
+        .modal-content h3 {
+            color: #f5d77f;
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .modal-content img.preview-img {
+            width: 100%;
+            max-height: 380px;
+            object-fit: contain;
+            border-radius: 6px;
+            border: 1px solid #8b5a2b;
+            margin-bottom: 1rem;
+            background: #000;
+        }
+
+        .close-modal-btn {
+            background: linear-gradient(180deg, #b8860b, #8b5a2b);
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* Barre admin */
+        .admin-bar {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 5, 2, 0.96);
+            border-top: 2px solid #b8860b;
+            padding: 10px 20px;
+            text-align: center;
+            z-index: 100;
+        }
+
+        .admin-btn {
+            background: linear-gradient(180deg, #b8860b, #8b5a2b);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.4rem; }
+            .pastille-node { width: 70px; height: 70px; top: 44%; }
+            .trunk-plaque { top: 64%; width: 85%; }
+            .pig-node { right: 10%; bottom: 8%; width: 70px; }
+            .speech-bubble { right: 8%; bottom: 20%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scene-tree">
+        <div class="scene-overlay"></div>
+
+        <header>
+            <h1>Le Grand Chêne</h1>
+            <p>Domaine de Bohême</p>
+        </header>
+
+        <!-- PASTILLE DE LANA -->
+        <div class="pastille-node" onclick="openLanaGallery()" title="Voir la photo de Lana">
+            <img src="lana.jpg" alt="Lana" onerror="this.src='https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300&auto=format&fit=crop'">
+        </div>
+
+        <!-- Tronc Central -->
+        <div class="trunk-plaque" onclick="openSection('Général / Famille')">
+            <h2>📜 Souvenirs Partagés</h2>
+            <p>Photos de groupe et événements</p>
+        </div>
+
+        <!-- PASTILLE DU COCHON (Philippe) -->
+        <div class="pig-node" onclick="triggerPig()" title="Philippe">
+            <img src="cochon.jpg" alt="Philippe" onerror="this.src='https://images.unsplash.com/photo-1516467508483-a7212febe31a?q=80&w=300&auto=format&fit=crop'">
+        </div>
+        
+        <!-- Bulle de dialogue interactive -->
+        <div class="speech-bubble" id="speechBubble">Philippe trop gentil 🐷</div>
+    </div>
+
+    <!-- MODALE LANA -->
+    <div class="modal-overlay" id="lanaModal">
+        <div class="modal-content">
+            <h3>Album de Lana</h3>
+            <img src="lana.jpg" class="preview-img" alt="Lana au château" onerror="this.src='https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300&auto=format&fit=crop'">
+            <p style="margin-bottom: 1rem; color: #d0b688; font-size: 0.9rem;">Lana au cœur du château enchanté.</p>
+            <button class="close-modal-btn" onclick="closeLanaGallery()">Fermer</button>
+        </div>
+    </div>
+
+    <!-- Barre admin -->
+    <div class="admin-bar" id="adminBar">
+        <span style="color: #f5d77f; margin-right: 15px; font-size: 0.9rem;">🔑 Mode Administrateur</span>
+        <button class="admin-btn" onclick="alert('Module d\'ajout de photos en cours')">+ Ajouter Photo</button>
+        <button class="admin-btn" onclick="alert('Gestion des pastilles')">Gérer l'Arbre</button>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const role = sessionStorage.getItem("userRole");
+            if (role === "admin") {
+                document.getElementById("adminBar").style.display = "block";
+            }
+        };
+
+        function openLanaGallery() {
+            document.getElementById("lanaModal").style.display = "flex";
+        }
+
+        function closeLanaGallery() {
+            document.getElementById("lanaModal").style.display = "none";
+        }
+
+        function triggerPig() {
+            // Afficher la bulle de texte
+            const bubble = document.getElementById("speechBubble");
+            bubble.style.display = "block";
+            setTimeout(() => {
+                bubble.style.display = "none";
+            }, 3500);
+
+            // Synthèse vocale : "Philippe trop gentil" avec voix d'homme grave et chaleureuse
+            try {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel(); // Stoppe toute lecture en cours
+
+                    const voices = window.speechSynthesis.getVoices();
+                    const maleVoice = voices.find(v => v.lang.startsWith('fr') && (v.name.toLowerCase().includes('thomas') || v.name.toLowerCase().includes('nicolas') || v.name.toLowerCase().includes('paul') || v.name.toLowerCase().includes('male') || (!v.name.toLowerCase().includes('hortense') && !v.name.toLowerCase().includes('julie') && !v.name.toLowerCase().includes('marie'))));
+
+                    const utterance = new SpeechSynthesisUtterance("Philippe trop gentil");
+                    utterance.lang = 'fr-FR';
+                    utterance.pitch = 0.4;  // Voix grave d'homme
+                    utterance.rate = 0.95;  // Rythme expressif et chaleureux
+                    utterance.volume = 1.0;
+                    if (maleVoice) utterance.voice = maleVoice;
+
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    // Fallback audio synthétique
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(130, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(240, ctx.currentTime + 0.6);
+                    
+                    gain.gain.setValueAtTime(0.8, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.7);
+                    
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.7);
+                }
+            } catch(e) {}
+        }
+
+        function openSection(name) {
+            alert("Ouverture de la section : " + name);
+        }
+    </script>
+
+</body>
+</html>

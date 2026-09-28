@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Domaine de Bohême — Entrée Privée</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* Fluidité sur écran tactile */
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Georgia', serif;
+            background-color: #1a0f07;
+        }
+
+        /* Scene Principale avec l'image de fond */
+        .scene-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: #1a0f07 url('prairie.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ----------------------------------------------------
+           ZONE CLIQUABLE (ORDINATEUR & ÉCRANS LARGES)
+        ---------------------------------------------------- */
+        .door-trigger {
+            position: absolute;
+            top: 29%;
+            left: 41.5%;
+            width: 17%;
+            height: 56%;
+            cursor: pointer;
+            border: 2px dashed rgba(255, 215, 0, 0.2);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        .door-trigger:hover, .door-trigger:active {
+            border-color: rgba(255, 215, 0, 0.8);
+            background: rgba(255, 215, 0, 0.12);
+            box-shadow: 0 0 25px rgba(255, 180, 0, 0.4);
+        }
+
+        /* Indication "Cliquer pour entrer" sur ordinateur */
+        .door-trigger::after {
+            content: "Touchez la porte pour entrer";
+            position: absolute;
+            bottom: -38px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 10, 5, 0.9);
+            color: #f3e5ab;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            border: 1px solid #8b5a2b;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .door-trigger:hover::after {
+            opacity: 1;
+        }
+
+        /* ----------------------------------------------------
+           ADAPTATION MOBILES ET TABLETTES (MODE PORTRAIT)
+        ---------------------------------------------------- */
+        @media (max-width: 768px) or (orientation: portrait) {
+            .door-trigger {
+                top: 31%;
+                left: 27%;
+                width: 46%;
+                height: 48%;
+            }
+
+            /* Sur mobile, on rend l'indication toujours légèrement visible ou au premier toucher */
+            .door-trigger::after {
+                opacity: 0.9;
+                bottom: 10px;
+                font-size: 0.75rem;
+                padding: 4px 10px;
+            }
+        }
+
+        /* ----------------------------------------------------
+           FENÊTRE DE CODE / FENÊTRE MODALE
+        ---------------------------------------------------- */
+        .login-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(12, 6, 2, 0.8);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            padding: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .login-box {
+            background: linear-gradient(145deg, #2a1a0e, #140b05);
+            border: 2px solid #b8860b;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), 0 0 20px rgba(184, 134, 11, 0.25);
+            border-radius: 14px;
+            padding: 2rem 1.5rem;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            color: #f3e5ab;
+        }
+
+        .login-box h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+            letter-spacing: 3px;
+            color: #f5d77f;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        .login-box p {
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            color: #d1b88a;
+            line-height: 1.4;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 0.9rem;
+            margin-bottom: 1.2rem;
+            border: 1px solid #8b5a2b;
+            background: rgba(10, 5, 2, 0.85);
+            color: #fff;
+            border-radius: 8px;
+            font-size: 16px; /* Prévient le zoom automatique sur iPhone */
+            text-align: center;
+            letter-spacing: 2px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .login-box input:focus {
+            border-color: #f5d77f;
+            box-shadow: 0 0 10px rgba(245, 215, 127, 0.4);
+        }
+
+        .login-box button.submit-btn {
+            width: 100%;
+            padding: 0.95rem;
+            background: linear-gradient(180deg, #b8860b, #8b5a2b);
+            border: none;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .login-box button.submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: #a89070;
+            font-size: 0.85rem;
+            margin-top: 1.2rem;
+            padding: 8px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scene-container">
+        <!-- Zone tactile / cliquable calquée sur la porte "Bohême" -->
+        <div class="door-trigger" title="Touchez la porte du Domaine" onclick="openLogin()"></div>
+    </div>
+
+    <!-- Fenêtre de connexion -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-box">
+            <h2>BOHÊME</h2>
+            <p>Bienvenue au Domaine.<br>Entrez le code secret pour entrer.</p>
+            
+            <form onsubmit="checkCode(event)">
+                <input type="password" id="accessCode" placeholder="••••••••" required autocomplete="off">
+                <button type="submit" class="submit-btn">Déverrouiller</button>
+            </form>
+
+            <p class="error-msg" id="errorMsg">Code incorrect. Veuillez réessayer.</p>
+            <button type="button" class="close-btn" onclick="closeLogin()">Retour au paysage</button>
+        </div>
+    </div>
+
+    <script>
+        // Mot de passe secret
+        const CODE_SECRET = "boheme2026";
+
+        function openLogin() {
+            document.getElementById('loginOverlay').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('accessCode').focus();
+            }, 100);
+        }
+
+        function closeLogin() {
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('errorMsg').style.display = 'none';
+            document.getElementById('accessCode').value = '';
+        }
+
+        function checkCode(e) {
+            e.preventDefault();
+            const input = document.getElementById('accessCode').value.trim();
+            
+            if (input === CODE_SECRET) {
+                alert("Accès autorisé ! Bienvenue au Domaine de Bohême.");
+                // Redirection vers votre page d'accueil une fois connecté :
+                // window.location.href = "accueil.html";
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+    </script>
+
+</body>
+</html>
