@@ -2,105 +2,83 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Le Grand Chêne Millénaire — Domaine de Bohême</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { width: 100%; height: 100%; overflow: hidden; font-family: 'Georgia', serif; background-color: #0d1608; color: #f3e5ab; }
 
-        /* ÉCRAN D'ACCÈS AVEC LA PRAIRIE ET LA PORTE */
+        /* ÉCRAN D'ACCÈS */
         .gate-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #1e3f1c url('prairie.jpg') no-repeat center center; background-size: cover; display: flex; justify-content: center; align-items: center; z-index: 100; transition: opacity 1s ease-in-out, visibility 1s ease-in-out; }
-        .door-hitbox { position: absolute; top: 25%; left: 41%; width: 18%; height: 55%; cursor: pointer; z-index: 10; background: transparent; border: 2px dashed rgba(245, 215, 127, 0.3); border-radius: 4px; transition: border-color 0.3s, background 0.3s; }
+        .door-hitbox { position: absolute; top: 25%; left: 41%; width: 18%; height: 55%; cursor: pointer; z-index: 10; background: transparent; border: 2px dashed rgba(245, 215, 127, 0.4); border-radius: 4px; transition: border-color 0.3s, background 0.3s; }
         .door-hitbox:hover { border-color: #f5d77f; background: rgba(245, 215, 127, 0.1); }
-        .keypad-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 10, 3, 0.85); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 20; padding: 20px; }
-        .gate-card { background: linear-gradient(145deg, rgba(28, 14, 6, 0.95), rgba(10, 5, 2, 0.98)); border: 2px solid #b8860b; border-radius: 16px; padding: 2rem; text-align: center; max-width: 340px; width: 100%; box-shadow: 0 15px 40px rgba(0,0,0,0.9); position: relative; }
+        .keypad-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 10, 3, 0.88); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 20; padding: 15px; }
+        .gate-card { background: linear-gradient(145deg, rgba(28, 14, 6, 0.95), rgba(10, 5, 2, 0.98)); border: 2px solid #b8860b; border-radius: 16px; padding: 1.5rem; text-align: center; max-width: 320px; width: 100%; box-shadow: 0 15px 40px rgba(0,0,0,0.9); position: relative; }
         .close-keypad-btn { position: absolute; top: 10px; right: 15px; background: none; border: none; color: #c0a87a; font-size: 1.2rem; cursor: pointer; }
-        .close-keypad-btn:hover { color: #f5d77f; }
-        .gate-card h2 { color: #f5d77f; font-size: 1.5rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; }
-        .gate-card p { color: #c0a87a; font-size: 0.85rem; margin-bottom: 1.5rem; font-style: italic; }
-        .code-display { background: #0a0502; border: 2px solid #b8860b; border-radius: 8px; color: #f5d77f; font-size: 1.8rem; letter-spacing: 8px; padding: 10px; margin-bottom: 1.2rem; height: 55px; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 3px 6px rgba(0,0,0,0.8); }
-        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1rem; }
-        .key-btn { background: linear-gradient(180deg, #b8860b, #6b4212); color: #fff; border: 1px solid #f5d77f; border-radius: 8px; font-size: 1.2rem; font-weight: bold; padding: 12px 0; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: transform 0.1s, background 0.2s; }
-        .key-btn:active { transform: scale(0.95); background: linear-gradient(180deg, #d4af37, #8b5a2b); }
-        .error-msg { color: #e74c3c; font-size: 0.8rem; height: 20px; margin-top: 5px; font-weight: bold; }
+        .gate-card h2 { color: #f5d77f; font-size: 1.3rem; margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 1px; }
+        .gate-card p { color: #c0a87a; font-size: 0.8rem; margin-bottom: 1rem; font-style: italic; }
+        .code-display { background: #0a0502; border: 2px solid #b8860b; border-radius: 8px; color: #f5d77f; font-size: 1.6rem; letter-spacing: 6px; padding: 8px; margin-bottom: 1rem; height: 48px; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 3px 6px rgba(0,0,0,0.8); }
+        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 0.8rem; }
+        .key-btn { background: linear-gradient(180deg, #b8860b, #6b4212); color: #fff; border: 1px solid #f5d77f; border-radius: 8px; font-size: 1.1rem; font-weight: bold; padding: 10px 0; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .key-btn:active { background: linear-gradient(180deg, #d4af37, #8b5a2b); }
+        .error-msg { color: #e74c3c; font-size: 0.8rem; height: 18px; font-weight: bold; }
 
         /* SCÈNE DE L'ARBRE */
-        .scene-tree { position: relative; width: 100vw; height: 100vh; background-color: #0d1608; display: flex; justify-content: center; align-items: center; opacity: 0; transition: opacity 1s ease-in-out; overflow: hidden; }
-        header { position: absolute; top: 15px; width: 100%; text-align: center; z-index: 30; pointer-events: none; }
-        header h1 { font-size: 2rem; color: #f5d77f; text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.95); letter-spacing: 2px; text-transform: uppercase; }
-        header p { color: #c9dbb8; font-size: 0.9rem; text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.95); margin-top: 2px; font-style: italic; }
-        .tree-wrapper { position: relative; width: 100vw; height: 100vh; max-width: 177.7778vh; max-height: 56.25vw; margin: auto; }
+        .scene-tree { position: relative; width: 100vw; height: 100vh; background-color: #0d1608; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: opacity 1s ease-in-out; overflow: hidden; }
+        header { position: absolute; top: 10px; width: 100%; text-align: center; z-index: 30; pointer-events: none; }
+        header h1 { font-size: 1.6rem; color: #f5d77f; text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.95); letter-spacing: 1px; text-transform: uppercase; }
+        header p { color: #c9dbb8; font-size: 0.8rem; text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.95); margin-top: 1px; font-style: italic; }
+
+        .tree-wrapper { position: relative; width: 100%; height: 100%; max-width: 100vw; max-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .tree-container { position: relative; width: 100vw; height: 56.25vw; max-height: 100vh; max-width: 177.77vh; margin: auto; }
         .tree-image { width: 100%; height: 100%; object-fit: contain; display: block; }
-        
-        .trunk-plaque { position: absolute; top: 79%; left: 50%; transform: translate(-50%, -50%); width: 28%; max-width: 260px; background: linear-gradient(145deg, rgba(28, 14, 6, 0.88), rgba(10, 5, 2, 0.92)); border: 1px solid rgba(184, 134, 11, 0.7); box-shadow: 0 8px 25px rgba(0,0,0,0.9); border-radius: 8px; padding: 0.5rem 1rem; text-align: center; cursor: pointer; z-index: 25; transition: transform 0.3s, border-color 0.3s; }
-        .trunk-plaque:hover { transform: translate(-50%, -53%) scale(1.03); border-color: #f5d77f; }
-        .trunk-plaque h2 { font-size: 0.9rem; color: #f5d77f; margin-bottom: 0.1rem; letter-spacing: 1px; text-transform: uppercase; }
+
+        .trunk-plaque { position: absolute; top: 79%; left: 50%; transform: translate(-50%, -50%); width: 28%; max-width: 240px; background: linear-gradient(145deg, rgba(28, 14, 6, 0.88), rgba(10, 5, 2, 0.92)); border: 1px solid rgba(184, 134, 11, 0.7); box-shadow: 0 8px 25px rgba(0,0,0,0.9); border-radius: 8px; padding: 0.4rem 0.8rem; text-align: center; cursor: pointer; z-index: 25; transition: transform 0.3s; }
+        .trunk-plaque h2 { font-size: 0.85rem; color: #f5d77f; margin-bottom: 0.1rem; text-transform: uppercase; }
         .trunk-plaque p { font-size: 0.6rem; color: #c0a87a; }
 
-        .member-node { position: absolute; width: 7.2%; height: 12.8%; border-radius: 50%; cursor: pointer; z-index: 20; overflow: hidden; transition: all 0.35s ease; background: rgba(0,0,0,0.5); border: 2px solid #b8860b; box-shadow: 0 5px 15px rgba(0,0,0,0.8); transform: translate(-50%, -50%); -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0.8) 65%, rgba(0,0,0,0) 90%); mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0.8) 65%, rgba(0,0,0,0) 90%); }
-        .member-node.lana-node { width: 8.5%; height: 15%; }
-        .member-node img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease, opacity 0.5s ease-in-out; }
-        .member-node:hover { transform: translate(-50%, -50%) scale(1.15); border-color: #f5d77f; }
-        .member-label { position: absolute; transform: translateX(-50%); background: rgba(10, 5, 2, 0.88); color: #f5d77f; padding: 2px 6px; border-radius: 4px; font-size: 0.62rem; font-weight: bold; white-space: nowrap; border: 1px solid rgba(184, 134, 11, 0.5); pointer-events: none; z-index: 21; }
+        .member-node { position: absolute; width: 7%; padding-bottom: 7%; border-radius: 50%; cursor: pointer; z-index: 20; overflow: hidden; transition: all 0.3s ease; background: rgba(0,0,0,0.5); border: 2px solid #b8860b; box-shadow: 0 5px 15px rgba(0,0,0,0.8); transform: translate(-50%, -50%); -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0.8) 65%, rgba(0,0,0,0) 90%); mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0.8) 65%, rgba(0,0,0,0) 90%); }
+        .member-node.lana-node { width: 8.5%; padding-bottom: 8.5%; }
+        .member-node img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        
+        .member-label { position: absolute; transform: translateX(-50%); background: rgba(10, 5, 2, 0.9); color: #f5d77f; padding: 2px 5px; border-radius: 4px; font-size: 0.6rem; font-weight: bold; white-space: nowrap; border: 1px solid rgba(184, 134, 11, 0.5); pointer-events: none; z-index: 21; }
 
-        .speech-bubble { display: none; position: absolute; background: #fff; color: #221207; padding: 8px 14px; border-radius: 12px; font-weight: bold; font-size: 0.9rem; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 35; pointer-events: none; animation: popUp 0.3s ease; }
-        @keyframes popUp { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .speech-bubble { display: none; position: absolute; background: #fff; color: #221207; padding: 8px 12px; border-radius: 12px; font-weight: bold; font-size: 0.85rem; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 35; pointer-events: none; }
 
         /* MODALE LECTEUR MÉDIA */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 12, 3, 0.92); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 50; padding: 15px; }
-        .prairie-content { position: relative; background: url('arbre.jpg') no-repeat center center; background-size: cover; border: 3px solid #b8860b; border-radius: 16px; max-width: 750px; width: 100%; max-height: 90vh; padding: 1.5rem; text-align: center; box-shadow: 0 20px 45px rgba(0,0,0,0.95); display: flex; flex-direction: column; overflow: hidden; }
-        .prairie-content::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(12, 20, 8, 0.82); z-index: 1; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 12, 3, 0.92); backdrop-filter: blur(8px); justify-content: center; align-items: center; z-index: 50; padding: 10px; }
+        .prairie-content { position: relative; background: url('arbre.jpg') no-repeat center center; background-size: cover; border: 2px solid #b8860b; border-radius: 14px; max-width: 700px; width: 100%; max-height: 95vh; padding: 1rem; text-align: center; box-shadow: 0 20px 45px rgba(0,0,0,0.95); display: flex; flex-direction: column; overflow: hidden; }
+        .prairie-content::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(12, 20, 8, 0.85); z-index: 1; }
         .prairie-header, .media-player-container, .prairie-thumbnails, .close-prairie-btn { position: relative; z-index: 2; }
-        .prairie-header h3 { color: #f5d77f; font-size: 1.4rem; margin-bottom: 0.8rem; text-transform: uppercase; text-shadow: 2px 2px 8px rgba(0,0,0,0.9); letter-spacing: 1px; }
-        .media-player-container { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 1rem; flex-grow: 1; min-height: 250px; max-height: 50vh; }
-        .media-screen { position: relative; max-height: 100%; display: flex; justify-content: center; align-items: center; width: 100%; }
-        .media-screen img, .media-screen video { max-width: 100%; max-height: 45vh; object-fit: contain; border: 2px solid #b8860b; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.8); background: #000; }
-        .media-counter { position: absolute; bottom: 10px; right: 10px; background: rgba(10, 5, 2, 0.85); color: #f5d77f; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; border: 1px solid rgba(184, 134, 11, 0.5); z-index: 3; }
-        .media-nav-btn { background: linear-gradient(180deg, #b8860b, #6b4212); color: #fff; border: 1px solid #f5d77f; width: 42px; height: 42px; border-radius: 50%; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; transition: transform 0.2s, background 0.3s; flex-shrink: 0; }
-        .media-nav-btn:hover { transform: scale(1.1); background: linear-gradient(180deg, #d4af37, #8b5a2b); }
-        .prairie-thumbnails { display: flex; gap: 8px; overflow-x: auto; padding: 5px; justify-content: center; margin-bottom: 1rem; max-height: 75px; width: 100%; }
+        .prairie-header h3 { color: #f5d77f; font-size: 1.2rem; margin-bottom: 0.5rem; text-transform: uppercase; }
+        .media-player-container { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 0.8rem; flex-grow: 1; min-height: 200px; max-height: 55vh; }
+        .media-screen { position: relative; max-height: 100%; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
+        .media-screen img, .media-screen video { max-width: 100%; max-height: 50vh; object-fit: contain; border: 2px solid #b8860b; border-radius: 8px; background: #000; }
+        .media-counter { position: absolute; bottom: 8px; right: 8px; background: rgba(10, 5, 2, 0.85); color: #f5d77f; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; border: 1px solid rgba(184, 134, 11, 0.5); z-index: 3; }
+        .media-nav-btn { background: linear-gradient(180deg, #b8860b, #6b4212); color: #fff; border: 1px solid #f5d77f; width: 36px; height: 36px; border-radius: 50%; font-size: 1rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         
-        .mini-thumb-wrap { position: relative; width: 55px; height: 55px; flex-shrink: 0; cursor: pointer; }
-        .mini-thumb { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; border: 2px solid #5a3818; opacity: 0.6; transition: all 0.2s; }
-        .mini-thumb-wrap:hover .mini-thumb { opacity: 0.9; transform: scale(1.05); }
-        .mini-thumb-wrap.active .mini-thumb { border-color: #f5d77f; opacity: 1; box-shadow: 0 0 10px rgba(245, 215, 127, 0.6); }
-        .video-badge { position: absolute; bottom: 2px; right: 2px; background: rgba(0,0,0,0.7); color: #f5d77f; font-size: 0.55rem; padding: 1px 3px; border-radius: 3px; }
-        .close-prairie-btn { background: linear-gradient(180deg, #b8860b, #6b4212); color: #fff; border: 1px solid #f5d77f; padding: 8px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(0,0,0,0.6); transition: background 0.3s; align-self: center; }
-        .close-prairie-btn:hover { background: linear-gradient(180deg, #d4af37, #8b5a2b); }
+        .prairie-thumbnails { display: flex; gap: 6px; overflow-x: auto; padding: 4px; justify-content: center; margin-bottom: 0.8rem; max-height: 65px; width: 100%; }
+        .mini-thumb-wrap { position: relative; width: 48px; height: 48px; flex-shrink: 0; cursor: pointer; background: #1a0f07; border-radius: 4px; border: 1px solid #5a3818; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .mini-thumb-wrap.active { border-color: #f5d77f; box-shadow: 0 0 8px rgba(245, 215, 127, 0.8); }
+        .mini-thumb { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+        .mini-thumb-wrap.active .mini-thumb { opacity: 1; }
+        .video-badge { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.6); color: #f5d77f; font-size: 0.8rem; padding: 2px 5px; border-radius: 50%; pointer-events: none; border: 1px solid #f5d77f; }
+        .close-prairie-btn { background: linear-gradient(180deg, #b8860b, #6b4212); color: #fff; border: 1px solid #f5d77f; padding: 6px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; align-self: center; }
 
-        /* --- ADAPTATION SPÉCIALE MOBILE --- */
         @media (max-width: 768px) {
-            header h1 { 
-                font-size: 1.1rem !important; 
-            }
-            header p { 
-                font-size: 0.7rem !important; 
-            }
-
-            .member-label {
-                font-size: 0.45rem !important;
-                padding: 1px 3px !important;
-                border-width: 1px !important;
-                border-radius: 3px !important;
-            }
-
-            .trunk-plaque {
-                width: 38% !important;
-                max-width: 140px !important;
-                padding: 0.2rem 0.4rem !important;
-                border-radius: 5px !important;
-            }
-            .trunk-plaque h2 {
-                font-size: 0.55rem !important;
-            }
-            .trunk-plaque p {
-                font-size: 0.45rem !important;
-                line-height: 1 !important;
-            }
-
-            .member-node {
-                border-width: 1px !important;
-            }
+            header { top: 5px; }
+            header h1 { font-size: 1rem; }
+            header p { font-size: 0.65rem; }
+            .door-hitbox { top: 30%; left: 35%; width: 30%; height: 45%; }
+            .member-node { border-width: 1px; }
+            .member-node.lana-node { width: 10%; padding-bottom: 10%; }
+            .member-label { font-size: 0.45rem !important; padding: 1px 3px !important; border-radius: 2px !important; }
+            .trunk-plaque { width: 42% !important; max-width: 150px !important; padding: 0.2rem 0.3rem !important; }
+            .trunk-plaque h2 { font-size: 0.55rem !important; }
+            .trunk-plaque p { font-size: 0.45rem !important; }
+            .prairie-content { padding: 0.8rem; }
+            .media-player-container { min-height: 160px; }
+            .media-nav-btn { width: 32px; height: 32px; font-size: 0.9rem; }
         }
     </style>
 </head>
@@ -115,7 +93,7 @@
                 <button class="close-keypad-btn" onclick="closeKeypad()">✕</button>
                 <h2>Domaine de Bohême</h2>
                 <p>Entrez le code secret pour ouvrir la porte</p>
-                <div class="code-display" id="codeDisplay">____</div>
+                <div class="code-display" id="codeDisplay">______</div>
                 <div class="keypad">
                     <button class="key-btn" onclick="pressKey('1')">1</button>
                     <button class="key-btn" onclick="pressKey('2')">2</button>
@@ -142,13 +120,15 @@
             <p>Domaine de Bohême</p>
         </header>
 
-        <div class="tree-wrapper" id="treeWrapper">
-            <img src="arbre.jpg" alt="Le Grand Chêne" class="tree-image" id="treeImage">
-            <div class="trunk-plaque" onclick="openMediaPlayer('souvenirs_partages', 0)">
-                <h2>📜 Souvenirs Partagés</h2>
-                <p>Photos de groupe et événements</p>
+        <div class="tree-wrapper">
+            <div class="tree-container" id="treeWrapper">
+                <img src="arbre.jpg" alt="Le Grand Chêne" class="tree-image" id="treeImage">
+                <div class="trunk-plaque" onclick="openMediaPlayer('souvenirs_partages')">
+                    <h2>📜 Souvenirs Partagés</h2>
+                    <p>Photos de groupe et événements</p>
+                </div>
+                <div class="speech-bubble" id="speechBubble">Philippe trop gentil 🐷</div>
             </div>
-            <div class="speech-bubble" id="speechBubble">Philippe trop gentil 🐷</div>
         </div>
     </div>
 
@@ -171,20 +151,19 @@
     </div>
 
     <script>
-        const SECRET_CODE = "1418"; 
+        const SECRET_CODE = "141839"; 
         let enteredCode = "";
 
-        // --- GESTION DU CODE SECRET ---
         function openKeypad() { document.getElementById("keypadModal").style.display = "flex"; clearCode(); }
         function closeKeypad() { document.getElementById("keypadModal").style.display = "none"; }
         function pressKey(digit) {
-            if (enteredCode.length < 4) { enteredCode += digit; updateDisplay(); }
-            if (enteredCode.length === 4) submitCode();
+            if (enteredCode.length < 6) { enteredCode += digit; updateDisplay(); }
+            if (enteredCode.length === 6) submitCode();
         }
         function clearCode() { enteredCode = ""; updateDisplay(); document.getElementById("errorMsg").innerText = ""; }
         function updateDisplay() {
             let displayStr = "";
-            for (let i = 0; i < 4; i++) displayStr += i < enteredCode.length ? "•" : "_";
+            for (let i = 0; i < 6; i++) displayStr += i < enteredCode.length ? "•" : "_";
             document.getElementById("codeDisplay").innerText = displayStr;
         }
         function submitCode() {
@@ -204,7 +183,6 @@
             }
         }
 
-        // --- DÉFINITION DES DOSSIERS ---
         const familyMembers = [
             { id: "mami_nicole", name: "Mami Nicole", top: "18%", left: "42%", folder: "MAMIE NICOLE" },
             { id: "papi_gerard", name: "Papi Gérard", top: "18%", left: "58%", folder: "PAPI GERARD" },
@@ -226,12 +204,6 @@
         let validMediaList = [];
         let currentIndex = 0;
 
-        function isVideoFile(filename) {
-            const ext = filename.split('.').pop().toLowerCase();
-            return ['mp4', 'webm', 'ogg'].includes(ext);
-        }
-
-        // --- GÉNÉRATION DES PASTILLES SUR L'ARBRE ---
         window.onload = function() {
             const treeWrapper = document.getElementById("treeWrapper");
 
@@ -242,17 +214,16 @@
                 node.className = "member-node" + (member.isLana ? " lana-node" : "");
                 node.style.top = member.top;
                 node.style.left = member.left;
-                node.title = member.name;
 
                 const img = document.createElement("img");
                 img.alt = member.name;
                 img.src = member.folder + "/1.jpg";
-                img.onerror = function() { this.style.display = "none"; };
+
                 node.appendChild(img);
 
                 node.onclick = () => {
                     if (member.isSpecial === "philippe") triggerPhilippe();
-                    openMediaPlayer(member.id, 0);
+                    openMediaPlayer(member.id);
                 };
 
                 treeWrapper.appendChild(node);
@@ -260,49 +231,59 @@
                 const label = document.createElement("div");
                 label.className = "member-label";
                 label.innerText = member.name;
-                let offset = member.isLana ? 9.5 : 8.2;
+                let offset = member.isLana ? 5.5 : 4.5;
                 label.style.top = (parseFloat(member.top) + offset) + "%";
                 label.style.left = member.left;
                 treeWrapper.appendChild(label);
             });
         };
 
-        // --- LECTURE EN DIRECT DU DOSSIER AU CLIC VIA LE PHP ---
-        async function openMediaPlayer(memberId, startIndex) {
+        // AUTOMATISATION : Teste les fichiers de 1 à 99 pour les photos (jpg) et vidéos (mp4)
+        async function openMediaPlayer(memberId) {
             const member = familyMembers.find(m => m.id === memberId);
             if (!member) return;
 
             currentActiveMember = member;
             document.getElementById("prairieTitle").innerText = "Album de " + member.name;
-            document.getElementById("mediaScreenContainer").innerHTML = "<p style='color: #f5d77f;'>Recherche des fichiers...</p>";
-            document.getElementById("prairieModal").style.display = "flex";
 
-            try {
-                const response = await fetch('get_files.php?folder=' + encodeURIComponent(member.folder));
-                const fileList = await response.json(); 
+            validMediaList = [];
+            const maxCheck = 99; // Recherche automatique de 1 à 99
+            let tempChecks = [];
 
-                if (fileList.length === 0) {
-                    document.getElementById("mediaScreenContainer").innerHTML = "<p style='color: #f5d77f;'>Le dossier est vide ou introuvable.</p>";
-                    document.getElementById("prairieThumbnails").innerHTML = "";
-                    return;
-                }
-
-                validMediaList = fileList.map(file => ({
-                    path: member.folder + "/" + file,
-                    isVideo: isVideoFile(file)
-                }));
-                
-                currentIndex = startIndex >= 0 && startIndex < validMediaList.length ? startIndex : 0;
-                updatePlayerView();
-                buildThumbnailsBar();
-
-            } catch (error) {
-                console.error("Erreur de chargement des fichiers :", error);
-                document.getElementById("mediaScreenContainer").innerHTML = "<p style='color: #e74c3c;'>Erreur: Impossible de lire le dossier (Avez-vous bien lancé le serveur PHP ?).</p>";
+            for (let i = 1; i <= maxCheck; i++) {
+                tempChecks.push(checkFileExists(`${member.folder}/${i}.jpg`, false));
+                tempChecks.push(checkFileExists(`${member.folder}/${i}.mp4`, true));
             }
+
+            const results = await Promise.all(tempChecks);
+            validMediaList = results.filter(item => item !== null);
+
+            if (validMediaList.length === 0) {
+                validMediaList.push({ path: `${member.folder}/1.jpg`, isVideo: false });
+            }
+
+            currentIndex = 0;
+            document.getElementById("prairieModal").style.display = "flex";
+            updatePlayerView();
+            buildThumbnailsBar();
         }
 
-        // --- AFFICHAGE ET NAVIGATION ---
+        function checkFileExists(path, isVideo) {
+            return new Promise((resolve) => {
+                if (isVideo) {
+                    const video = document.createElement('video');
+                    video.onloadedmetadata = () => resolve({ path, isVideo: true });
+                    video.onerror = () => resolve(null);
+                    video.src = path;
+                } else {
+                    const img = new Image();
+                    img.onload = () => resolve({ path, isVideo: false });
+                    img.onerror = () => resolve(null);
+                    img.src = path;
+                }
+            });
+        }
+
         function updatePlayerView() {
             if (validMediaList.length === 0) return;
 
@@ -342,22 +323,25 @@
                 const wrap = document.createElement("div");
                 wrap.className = "mini-thumb-wrap" + (idx === currentIndex ? " active" : "");
 
-                const thumb = document.createElement("img");
-                thumb.className = "mini-thumb";
-                
                 if (media.isVideo) {
-                    thumb.src = media.path.substring(0, media.path.lastIndexOf('.')) + '.jpg';
-                    thumb.onerror = function() { this.src = currentActiveMember.folder + '/1.jpg'; };
+                    const thumb = document.createElement("video");
+                    thumb.className = "mini-thumb";
+                    thumb.src = media.path + "#t=0.5";
+                    thumb.preload = "metadata";
+                    thumb.muted = true;
+                    wrap.appendChild(thumb);
+
                     const badge = document.createElement("div");
                     badge.className = "video-badge";
                     badge.innerText = "▶";
                     wrap.appendChild(badge);
                 } else {
+                    const thumb = document.createElement("img");
+                    thumb.className = "mini-thumb";
                     thumb.src = media.path;
-                    thumb.onerror = function() { this.style.display = "none"; };
+                    wrap.appendChild(thumb);
                 }
 
-                wrap.insertBefore(thumb, wrap.firstChild);
                 wrap.onclick = () => { currentIndex = idx; updatePlayerView(); };
                 container.appendChild(wrap);
             });
@@ -369,7 +353,6 @@
             document.getElementById("prairieModal").style.display = "none";
         }
 
-        // --- ANIMATION PHILIPPE ---
         function triggerPhilippe() {
             const bubble = document.getElementById("speechBubble");
             bubble.style.bottom = "23%";
