@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Famille Bohème</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #2b2d42;
+            line-height: 1.6;
+        }
+
+        /* En-tête / Navigation */
+        header {
+            background-color: #1d3557;
+            color: #ffffff;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        nav a {
+            color: #edf2f4;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #e63946;
+        }
+
+        /* Bannière d'accueil */
+        .hero {
+            background: linear-gradient(135deg, #1d3557 0%, #457b9d 100%);
+            color: white;
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+            opacity: 0.9;
+        }
+
+        /* Sections principales */
+        .container {
+            max-width: 1100px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            color: #1d3557;
+            margin-bottom: 1rem;
+        }
+
+        /* Pied de page */
+        footer {
+            background-color: #1d3557;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .hero h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Famille Bohème</h1>
+        <nav>
+            <a href="#accueil">Accueil</a>
+            <a href="#a-propos">À Propos</a>
+            <a href="#projets">Projets</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <section class="hero" id="accueil">
+        <h2>Bienvenue chez la Famille Bohème</h2>
+        <p>Découvrez nos histoires, nos passions et nos projets partagés.</p>
+    </section>
+
+    <div class="container">
+        <section id="a-propos">
+            <h2 style="text-align: center; color: #1d3557;">À Propos</h2>
+            <p style="text-align: center; max-width: 700px; margin: 1rem auto; color: #555;">
+                Ce site réunit notre univers familial, nos souvenirs et nos différentes réalisations.
+            </p>
+        </section>
+
+        <div class="card-grid" id="projets">
+            <div class="card">
+                <h3>Nos Histoires</h3>
+                <p>Créations, écrits et récits partagés avec passion au fil du temps.</p>
+            </div>
+            <div class="card">
+                <h3>Galerie & Souvenirs</h3>
+                <p>Espace dédié aux photographies, événements et moments marquants de la famille.</p>
+            </div>
+            <div class="card">
+                <h3>Projets & Partages</h3>
+                <p>Découvrez ce sur quoi nous travaillons en ce moment et nos actualités.</p>
+            </div>
+        </div>
+
+        <section id="contact" style="margin-top: 4rem; text-align: center;">
+            <h2 style="color: #1d3557;">Nous Contacter</h2>
+            <p style="margin-top: 1rem; color: #555;">
+                Pour toute question ou information, n'hésitez pas à nous écrire.
+            </p>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Famille Bohème — Tous droits réservés.</p>
+    </footer>
+
+</body>
+</html>
